@@ -7,11 +7,10 @@ This project is simple frontend based library management system to simulate func
 This project allow user and administration to manage book , transactions and memeberships.
 
 Project Structure:
-acxiom/ ├── index.html 
-        ├── css/ │  
-        |        └── styles.css 
-        ├── js/ 
-        │ └── script.js
+Library-Management-System
+        ├── index.html
+        ├── styles.css
+        └── script.js
 
 
 Technology used :
