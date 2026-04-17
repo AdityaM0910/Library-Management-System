@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ==================== LOGIN PAGE ==================== -->
+<div class="page active" id="page-login">
+  <div class="login-wrap">
+    <div class="login-box">
+      <div class="login-title">Library System</div>
+      <div class="login-sub">Management Portal</div>
+      <div class="login-tabs">
+        <div class="login-tab active" onclick="selectLoginTab('admin',this)">Admin</div>
+        <div class="login-tab" onclick="selectLoginTab('user',this)">User</div>
+      </div>
+      <div id="login-error" class="error-msg">Invalid credentials. Try admin/admin or user/user</div>
+      <label>User ID</label>
+      <input type="text" id="login-id" placeholder="Enter user ID">
+      <label>Password</label>
+      <input type="password" id="login-pwd" placeholder="Enter password">
+      <button class="btn btn-gold btn-full" onclick="doLogin()">Login</button>
+      <div style="margin-top:16px;font-size:12px;color:var(--text-dim);text-align:center;">Admin: adm / adm &nbsp;|&nbsp; User: user / user</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN HOME ==================== -->
+<div class="page" id="page-admin-home">
+  <nav>
+    <div class="nav-brand">📚 LibraryMS</div>
+    <div class="nav-links">
+      <div class="nav-link active" onclick="showAdminSection('home')">Home</div>
+      <div class="nav-link" onclick="showPage('page-maintenance')">Maintenance</div>
+      <div class="nav-link" onclick="showPage('page-reports')">Reports</div>
+      <div class="nav-link" onclick="showPage('page-transactions')">Transactions</div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge">ADMIN</span>
+      <span class="nav-user">Administrator</span>
+      <button class="btn btn-outline" onclick="logout()">Log Out</button>
+    </div>
+  </nav>
+  <div class="content">
+    <div class="page-header">
+      <h1>Admin Dashboard</h1>
+      <p>Welcome back — manage the full library system from here</p>
+    </div>
+    <div class="modules">
+      <div class="module-card" onclick="showPage('page-maintenance')">
+        <div class="module-icon">🔧</div>
+        <div class="module-name">Maintenance</div>
+        <div class="module-desc">Books, memberships & users</div>
+      </div>
+      <div class="module-card" onclick="showPage('page-reports')">
+        <div class="module-icon">📊</div>
+        <div class="module-name">Reports</div>
+        <div class="module-desc">View all library reports</div>
+      </div>
+      <div class="module-card" onclick="showPage('page-transactions')">
+        <div class="module-icon">🔄</div>
+        <div class="module-name">Transactions</div>
+        <div class="module-desc">Issue, return & fine payments</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Product Code Reference</div>
+      <table class="prod-table">
+        <tr><th>Code Range (Books)</th><th>Code Range (Movies)</th><th>Category</th></tr>
+        <tr><td>SC-B-000001 → SC-B-000004</td><td>SC-M-000001 → SC-M-000004</td><td>Science</td></tr>
+        <tr><td>EC-B-000001 → EC-B-000004</td><td>EC-M-000001 → EC-M-000004</td><td>Economics</td></tr>
+        <tr><td>FC-B-000001 → FC-B-000004</td><td>FC-M-000001 → FC-M-000004</td><td>Fiction</td></tr>
+        <tr><td>CH-B-000001 → CH-B-000004</td><td>CH-M-000001 → CH-M-000004</td><td>Children</td></tr>
+        <tr><td>PD-B-000001 → PD-B-000004</td><td>PD-M-000001 → PD-M-000004</td><td>Personal Development</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== USER HOME ==================== -->
+<div class="page" id="page-user-home">
+  <nav>
+    <div class="nav-brand">📚 LibraryMS</div>
+    <div class="nav-links">
+      <div class="nav-link active">Home</div>
+      <div class="nav-link" onclick="showPage('page-reports')">Reports</div>
+      <div class="nav-link" onclick="showPage('page-transactions')">Transactions</div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge" style="background:#2980b9;color:#fff;">USER</span>
+      <span class="nav-user">Library User</span>
+      <button class="btn btn-outline" onclick="logout()">Log Out</button>
+    </div>
+  </nav>
+  <div class="content">
+    <div class="page-header">
+      <h1>Welcome to the Library</h1>
+      <p>Access reports and manage your book transactions</p>
+    </div>
+    <div class="modules">
+      <div class="module-card" onclick="showPage('page-reports')">
+        <div class="module-icon">📊</div>
+        <div class="module-name">Reports</div>
+        <div class="module-desc">View books, movies & memberships</div>
+      </div>
+      <div class="module-card" onclick="showPage('page-transactions')">
+        <div class="module-icon">🔄</div>
+        <div class="module-name">Transactions</div>
+        <div class="module-desc">Issue, return & pay fines</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TRANSACTIONS PAGE ==================== -->
+<div class="page" id="page-transactions">
+  <nav>
+    <div class="nav-brand">📚 LibraryMS</div>
+    <div class="nav-links">
+      <div class="nav-link" onclick="goHome()">Home</div>
+      <div class="nav-link" id="txn-maint-link" style="display:none" onclick="showPage('page-maintenance')">Maintenance</div>
+      <div class="nav-link" onclick="showPage('page-reports')">Reports</div>
+      <div class="nav-link active">Transactions</div>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-outline" onclick="logout()">Log Out</button>
+    </div>
+  </nav>
+  <div class="content">
+    <div class="page-header"><h1>Transactions</h1><p>Book availability, issue, return and fine management</p></div>
+    <div class="txn-nav">
+      <div class="txn-btn active" onclick="showTxn('available',this)">📖 Book Available?</div>
+      <div class="txn-btn" onclick="showTxn('issue',this)">➕ Issue Book</div>
+      <div class="txn-btn" onclick="showTxn('return',this)">↩️ Return Book</div>
+      <div class="txn-btn" onclick="showTxn('fine',this)">💰 Pay Fine</div>
+    </div>
+
+    <!-- Book Available -->
+    <div id="txn-available">
+      <div class="card">
+        <div class="card-title">Check Book Availability</div>
+        <div id="avail-error" class="error-msg">Please enter a book name or select an author before searching.</div>
+        <div class="search-row">
+          <div class="field"><label>Book Name</label><input type="text" id="avail-name" placeholder="Enter book name"></div>
+          <div class="field"><label>Author</label>
+            <select id="avail-author">
+              <option value="">-- Select Author --</option>
+              <option>Stephen Hawking</option><option>George Orwell</option><option>J.K. Rowling</option>
+              <option>Malcolm Gladwell</option><option>Richard Feynman</option><option>Yuval Harari</option>
+            </select>
+          </div>
+          <button class="btn btn-gold" onclick="searchBooks()">Search</button>
+        </div>
+      </div>
+      <div class="card" id="search-results" style="display:none">
+        <div class="card-title">Search Results</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Book Name</th><th>Author</th><th>Serial No</th><th>Available</th><th>Select</th></tr></thead>
+            <tbody id="search-tbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:16px"><button class="btn btn-gold" onclick="proceedToIssue()">Issue Selected Book</button></div>
+      </div>
+    </div>
+
+    <!-- Issue Book -->
+    <div id="txn-issue" style="display:none">
+      <div class="card">
+        <div class="card-title">Issue Book</div>
+        <div id="issue-error" class="error-msg"></div>
+        <div class="form-grid">
+          <div>
+            <label>Book Name *</label>
+            <select id="issue-book" onchange="fillIssueAuthor()">
+              <option value="">-- Select Book --</option>
+              <option>A Brief History of Time</option><option>1984</option><option>Harry Potter</option>
+              <option>The Tipping Point</option><option>Surely You're Joking Mr. Feynman</option><option>Sapiens</option>
+            </select>
+          </div>
+          <div>
+            <label>Author (auto-filled)</label>
+            <input type="text" id="issue-author" readonly style="background:#111;color:var(--text-muted)">
+          </div>
+          <div>
+            <label>Issue Date *</label>
+            <input type="date" id="issue-date">
+          </div>
+          <div>
+            <label>Return Date * (max 15 days)</label>
+            <input type="date" id="issue-return">
+          </div>
+          <div class="form-full">
+            <label>Remarks (optional)</label>
+            <textarea id="issue-remarks" placeholder="Any remarks..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-gold" onclick="submitIssue()">Confirm Issue</button>
+          <button class="btn btn-outline" onclick="showPage('page-cancel')">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Return Book -->
+    <div id="txn-return" style="display:none">
+      <div class="card">
+        <div class="card-title">Return Book</div>
+        <div id="return-error" class="error-msg"></div>
+        <div class="form-grid">
+          <div>
+            <label>Book Name *</label>
+            <select id="return-book" onchange="fillReturnDetails()">
+              <option value="">-- Select Book --</option>
+              <option>A Brief History of Time</option><option>1984</option><option>Harry Potter</option>
+              <option>The Tipping Point</option><option>Sapiens</option>
+            </select>
+          </div>
+          <div>
+            <label>Author (auto-filled)</label>
+            <input type="text" id="return-author" readonly style="background:#111;color:var(--text-muted)">
+          </div>
+          <div>
+            <label>Serial No *</label>
+            <select id="return-serial">
+              <option value="">-- Select Serial No --</option>
+              <option>SC-B-000001</option><option>FC-B-000002</option><option>EC-B-000001</option>
+            </select>
+          </div>
+          <div>
+            <label>Issue Date (auto-filled)</label>
+            <input type="text" id="return-issue-date" readonly style="background:#111;color:var(--text-muted)">
+          </div>
+          <div>
+            <label>Return Date *</label>
+            <input type="date" id="return-date">
+          </div>
+          <div>
+            <label>Remarks (optional)</label>
+            <input type="text" id="return-remarks" placeholder="Any remarks...">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-gold" onclick="submitReturn()">Confirm Return</button>
+          <button class="btn btn-outline" onclick="showPage('page-cancel')">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pay Fine -->
+    <div id="txn-fine" style="display:none">
+      <div class="card">
+        <div class="card-title">Pay Fine</div>
+        <div id="fine-error" class="error-msg"></div>
+        <div class="form-grid">
+          <div><label>Book Name</label><input type="text" id="fine-book" placeholder="Book name" readonly style="background:#111;color:var(--text-muted)" value="Sapiens"></div>
+          <div><label>Author</label><input type="text" id="fine-author" readonly style="background:#111;color:var(--text-muted)" value="Yuval Harari"></div>
+          <div><label>Serial No</label><input type="text" id="fine-serial" readonly style="background:#111;color:var(--text-muted)" value="PD-B-000003"></div>
+          <div><label>Issue Date</label><input type="date" id="fine-issue" value="2025-03-01"></div>
+          <div><label>Return Date</label><input type="date" id="fine-return" value="2025-03-16"></div>
+          <div><label>Actual Return Date</label><input type="date" id="fine-actual" onchange="calcFine()"></div>
+        </div>
+        <div class="fine-box" id="fine-display">
+          <div class="fine-amount" id="fine-amt">₹ 0</div>
+          <div class="fine-label">Fine Calculated (₹5 per day overdue)</div>
+        </div>
+        <div class="check-group">
+          <label><input type="checkbox" id="fine-paid"> Fine Paid</label>
+        </div>
+        <div><label>Remarks (optional)</label><textarea id="fine-remarks" placeholder="Payment remarks..."></textarea></div>
+        <div class="form-actions">
+          <button class="btn btn-gold" onclick="submitFine()">Confirm & Complete Return</button>
+          <button class="btn btn-outline" onclick="showPage('page-cancel')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== REPORTS PAGE ==================== -->
+<div class="page" id="page-reports">
+  <nav>
+    <div class="nav-brand">📚 LibraryMS</div>
+    <div class="nav-links">
+      <div class="nav-link" onclick="goHome()">Home</div>
+      <div class="nav-link" id="rep-maint-link" style="display:none" onclick="showPage('page-maintenance')">Maintenance</div>
+      <div class="nav-link active">Reports</div>
+      <div class="nav-link" onclick="showPage('page-transactions')">Transactions</div>
+    </div>
+    <div class="nav-right"><button class="btn btn-outline" onclick="logout()">Log Out</button></div>
+  </nav>
+  <div class="content">
+    <div class="page-header"><h1>Reports</h1><p>View all library data and statistics</p></div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-section">Available Reports</div>
+        <div class="sidebar-item active" onclick="showReport('books',this)">Master List of Books</div>
+        <div class="sidebar-item" onclick="showReport('movies',this)">Master List of Movies</div>
+        <div class="sidebar-item" onclick="showReport('memberships',this)">List of Memberships</div>
+        <div class="sidebar-item" onclick="showReport('active',this)">Active Issues</div>
+        <div class="sidebar-item" onclick="showReport('overdue',this)">Overdue Returns</div>
+        <div class="sidebar-item" onclick="showReport('requests',this)">Issue Requests</div>
+      </div>
+      <div class="main-area">
+        <!-- Books -->
+        <div id="report-books" class="card">
+          <div class="card-title">Master List of Books</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Serial No</th><th>Book Name</th><th>Author</th><th>Category</th><th>Status</th><th>Cost</th><th>Procured</th></tr></thead>
+            <tbody>
+              <tr><td>SC-B-000001</td><td>A Brief History of Time</td><td>Stephen Hawking</td><td>Science</td><td><span class="badge badge-green">Available</span></td><td>₹450</td><td>2022-01-15</td></tr>
+              <tr><td>FC-B-000001</td><td>1984</td><td>George Orwell</td><td>Fiction</td><td><span class="badge badge-red">Issued</span></td><td>₹320</td><td>2021-06-10</td></tr>
+              <tr><td>FC-B-000002</td><td>Harry Potter</td><td>J.K. Rowling</td><td>Fiction</td><td><span class="badge badge-green">Available</span></td><td>₹580</td><td>2020-09-01</td></tr>
+              <tr><td>PD-B-000001</td><td>The Tipping Point</td><td>Malcolm Gladwell</td><td>Personal Dev</td><td><span class="badge badge-green">Available</span></td><td>₹380</td><td>2023-03-20</td></tr>
+              <tr><td>SC-B-000002</td><td>Surely You're Joking Mr. Feynman</td><td>Richard Feynman</td><td>Science</td><td><span class="badge badge-yellow">Reserved</span></td><td>₹420</td><td>2022-11-05</td></tr>
+              <tr><td>PD-B-000003</td><td>Sapiens</td><td>Yuval Harari</td><td>Personal Dev</td><td><span class="badge badge-red">Issued</span></td><td>₹550</td><td>2021-07-22</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <!-- Movies -->
+        <div id="report-movies" class="card" style="display:none">
+          <div class="card-title">Master List of Movies</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Serial No</th><th>Movie Name</th><th>Director</th><th>Category</th><th>Status</th><th>Cost</th><th>Procured</th></tr></thead>
+            <tbody>
+              <tr><td>SC-M-000001</td><td>Interstellar</td><td>Christopher Nolan</td><td>Science</td><td><span class="badge badge-green">Available</span></td><td>₹250</td><td>2023-01-10</td></tr>
+              <tr><td>FC-M-000001</td><td>The Matrix</td><td>Wachowski Sisters</td><td>Fiction</td><td><span class="badge badge-red">Issued</span></td><td>₹200</td><td>2022-05-15</td></tr>
+              <tr><td>CH-M-000001</td><td>Finding Nemo</td><td>Andrew Stanton</td><td>Children</td><td><span class="badge badge-green">Available</span></td><td>₹180</td><td>2021-12-01</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <!-- Memberships -->
+        <div id="report-memberships" class="card" style="display:none">
+          <div class="card-title">List of Active Memberships</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>ID</th><th>Member Name</th><th>Contact</th><th>Aadhaar</th><th>Start</th><th>End</th><th>Status</th><th>Fine Pending</th></tr></thead>
+            <tbody>
+              <tr><td>MEM-001</td><td>Ravi Kumar</td><td>9876543210</td><td>XXXX-XXXX-1234</td><td>2024-01-01</td><td>2025-01-01</td><td><span class="badge badge-green">Active</span></td><td>₹0</td></tr>
+              <tr><td>MEM-002</td><td>Priya Sharma</td><td>9123456780</td><td>XXXX-XXXX-5678</td><td>2024-03-15</td><td>2025-03-15</td><td><span class="badge badge-green">Active</span></td><td>₹35</td></tr>
+              <tr><td>MEM-003</td><td>Arjun Mehta</td><td>9988776655</td><td>XXXX-XXXX-9012</td><td>2023-06-01</td><td>2024-06-01</td><td><span class="badge badge-red">Expired</span></td><td>₹0</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <!-- Active Issues -->
+        <div id="report-active" class="card" style="display:none">
+          <div class="card-title">Active Issues</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Serial No</th><th>Book/Movie Name</th><th>Membership ID</th><th>Issue Date</th><th>Due Date</th></tr></thead>
+            <tbody>
+              <tr><td>FC-B-000001</td><td>1984</td><td>MEM-001</td><td>2025-03-20</td><td>2025-04-04</td></tr>
+              <tr><td>PD-B-000003</td><td>Sapiens</td><td>MEM-002</td><td>2025-03-01</td><td>2025-03-16</td></tr>
+              <tr><td>FC-M-000001</td><td>The Matrix</td><td>MEM-001</td><td>2025-04-01</td><td>2025-04-16</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <!-- Overdue -->
+        <div id="report-overdue" class="card" style="display:none">
+          <div class="card-title">Overdue Returns</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Serial No</th><th>Book Name</th><th>Membership ID</th><th>Issue Date</th><th>Due Date</th><th>Fine</th></tr></thead>
+            <tbody>
+              <tr><td>PD-B-000003</td><td>Sapiens</td><td>MEM-002</td><td>2025-03-01</td><td>2025-03-16</td><td><span class="badge badge-red">₹175</span></td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <!-- Requests -->
+        <div id="report-requests" class="card" style="display:none">
+          <div class="card-title">Issue Requests</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Membership ID</th><th>Book/Movie Name</th><th>Requested Date</th><th>Fulfilled Date</th></tr></thead>
+            <tbody>
+              <tr><td>MEM-003</td><td>A Brief History of Time</td><td>2025-04-10</td><td>—</td></tr>
+              <tr><td>MEM-001</td><td>Sapiens</td><td>2025-04-05</td><td>—</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MAINTENANCE PAGE ==================== -->
+<div class="page" id="page-maintenance">
+  <nav>
+    <div class="nav-brand">📚 LibraryMS</div>
+    <div class="nav-links">
+      <div class="nav-link" onclick="goHome()">Home</div>
+      <div class="nav-link active">Maintenance</div>
+      <div class="nav-link" onclick="showPage('page-reports')">Reports</div>
+      <div class="nav-link" onclick="showPage('page-transactions')">Transactions</div>
+    </div>
+    <div class="nav-right"><button class="btn btn-outline" onclick="logout()">Log Out</button></div>
+  </nav>
+  <div class="content">
+    <div class="page-header"><h1>Maintenance</h1><p>Admin-only: manage books, memberships and users</p></div>
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="sidebar-section">Membership</div>
+        <div class="sidebar-item active" onclick="showMaint('add-member',this)">Add Membership</div>
+        <div class="sidebar-item" onclick="showMaint('update-member',this)">Update Membership</div>
+        <div class="sidebar-section">Books / Movies</div>
+        <div class="sidebar-item" onclick="showMaint('add-book',this)">Add Book/Movie</div>
+        <div class="sidebar-item" onclick="showMaint('update-book',this)">Update Book/Movie</div>
+        <div class="sidebar-section">Users</div>
+        <div class="sidebar-item" onclick="showMaint('user-mgmt',this)">User Management</div>
+      </div>
+      <div class="main-area">
+
+        <!-- Add Membership -->
+        <div id="maint-add-member" class="card">
+          <div class="card-title">Add Membership</div>
+          <div id="am-error" class="error-msg">All fields are required.</div>
+          <div class="form-grid">
+            <div><label>First Name *</label><input type="text" id="am-fname" placeholder="First name"></div>
+            <div><label>Last Name *</label><input type="text" id="am-lname" placeholder="Last name"></div>
+            <div><label>Contact Number *</label><input type="text" id="am-contact" placeholder="10-digit mobile"></div>
+            <div><label>Aadhaar Card No *</label><input type="text" id="am-aadhar" placeholder="XXXX-XXXX-XXXX"></div>
+            <div class="form-full"><label>Contact Address *</label><textarea id="am-address" placeholder="Full address"></textarea></div>
+            <div><label>Start Date *</label><input type="date" id="am-start"></div>
+            <div><label>End Date *</label><input type="date" id="am-end"></div>
+          </div>
+          <label>Membership Duration *</label>
+          <div class="radio-group">
+            <label><input type="radio" name="membership" value="6" checked> 6 Months</label>
+            <label><input type="radio" name="membership" value="12"> 1 Year</label>
+            <label><input type="radio" name="membership" value="24"> 2 Years</label>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" onclick="submitAddMember()">Add Membership</button>
+            <button class="btn btn-outline" onclick="clearForm('add-member')">Clear</button>
+          </div>
+        </div>
+
+        <!-- Update Membership -->
+        <div id="maint-update-member" class="card" style="display:none">
+          <div class="card-title">Update Membership</div>
+          <div id="um-error" class="error-msg">Membership number is required.</div>
+          <div class="form-grid">
+            <div class="form-full"><label>Membership Number *</label><input type="text" id="um-id" placeholder="e.g. MEM-001" onchange="loadMember()"></div>
+            <div><label>Start Date</label><input type="date" id="um-start"></div>
+            <div><label>End Date</label><input type="date" id="um-end"></div>
+          </div>
+          <label>Extend Membership By</label>
+          <div class="radio-group">
+            <label><input type="radio" name="extend" value="6" checked> 6 Months</label>
+            <label><input type="radio" name="extend" value="12"> 1 Year</label>
+            <label><input type="radio" name="extend" value="24"> 2 Years</label>
+          </div>
+          <hr class="divider">
+          <div class="radio-group">
+            <label><input type="radio" name="extend" value="cancel"> Cancel Membership</label>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" onclick="submitUpdateMember()">Update</button>
+            <button class="btn btn-outline" onclick="showPage('page-cancel')">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Add Book -->
+        <div id="maint-add-book" class="card" style="display:none">
+          <div class="card-title">Add Book / Movie</div>
+          <div id="ab-error" class="error-msg">All fields are required.</div>
+          <div class="radio-group" style="margin-bottom:20px;">
+            <label><input type="radio" name="item-type" value="book" checked> Book</label>
+            <label><input type="radio" name="item-type" value="movie"> Movie</label>
+          </div>
+          <div class="form-grid">
+            <div><label>Book/Movie Name *</label><input type="text" id="ab-name" placeholder="Enter name"></div>
+            <div><label>Author / Director *</label><input type="text" id="ab-author" placeholder="Author or director"></div>
+            <div><label>Category *</label>
+              <select id="ab-category">
+                <option value="">-- Select Category --</option>
+                <option>Science</option><option>Economics</option><option>Fiction</option><option>Children</option><option>Personal Development</option>
+              </select>
+            </div>
+            <div><label>Cost (₹) *</label><input type="text" id="ab-cost" placeholder="e.g. 450"></div>
+            <div><label>Date of Procurement *</label><input type="date" id="ab-date"></div>
+            <div><label>Quantity / Copies *</label><input type="text" id="ab-qty" value="1"></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" onclick="submitAddBook()">Add Item</button>
+            <button class="btn btn-outline" onclick="clearForm('add-book')">Clear</button>
+          </div>
+        </div>
+
+        <!-- Update Book -->
+        <div id="maint-update-book" class="card" style="display:none">
+          <div class="card-title">Update Book / Movie</div>
+          <div id="ub-error" class="error-msg">All fields are required.</div>
+          <div class="radio-group">
+            <label><input type="radio" name="upd-type" value="book" checked> Book</label>
+            <label><input type="radio" name="upd-type" value="movie"> Movie</label>
+          </div>
+          <div class="form-grid">
+            <div><label>Book/Movie Name *</label>
+              <select id="ub-name">
+                <option value="">-- Select --</option>
+                <option>A Brief History of Time</option><option>1984</option><option>Harry Potter</option><option>Sapiens</option>
+              </select>
+            </div>
+            <div><label>Serial No *</label><input type="text" id="ub-serial" placeholder="e.g. SC-B-000001"></div>
+            <div><label>Status *</label>
+              <select id="ub-status">
+                <option value="">-- Select Status --</option>
+                <option>Available</option><option>Issued</option><option>Reserved</option><option>Lost</option>
+              </select>
+            </div>
+            <div><label>Date *</label><input type="date" id="ub-date"></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" onclick="submitUpdateBook()">Update Item</button>
+            <button class="btn btn-outline" onclick="showPage('page-cancel')">Cancel</button>
+          </div>
+        </div>
+
+        <!-- User Management -->
+        <div id="maint-user-mgmt" class="card" style="display:none">
+          <div class="card-title">User Management</div>
+          <div id="usr-error" class="error-msg">Name is required.</div>
+          <div class="radio-group" style="margin-bottom:20px;">
+            <label><input type="radio" name="user-mode" value="new" checked> New User</label>
+            <label><input type="radio" name="user-mode" value="existing"> Existing User</label>
+          </div>
+          <div class="form-grid">
+            <div class="form-full"><label>Name *</label><input type="text" id="usr-name" placeholder="Full name"></div>
+          </div>
+          <div class="check-group">
+            <label><input type="checkbox" id="usr-active" checked> Active</label>
+            <label><input type="checkbox" id="usr-admin"> Admin</label>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" onclick="submitUserMgmt()">Save User</button>
+            <button class="btn btn-outline" onclick="clearForm('user-mgmt')">Clear</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CANCEL PAGE ==================== -->
+<div class="page" id="page-cancel">
+  <nav><div class="nav-brand">📚 LibraryMS</div><div class="nav-right"><button class="btn btn-outline" onclick="logout()">Log Out</button></div></nav>
+  <div class="content">
+    <div class="result-page">
+      <div class="result-icon">❌</div>
+      <div class="result-title">Transaction Cancelled</div>
+      <div class="result-sub">No changes were made to the system.</div>
+      <button class="btn btn-gold" onclick="goHome()">Return to Home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CONFIRMATION PAGE ==================== -->
+<div class="page" id="page-confirm">
+  <nav><div class="nav-brand">📚 LibraryMS</div><div class="nav-right"><button class="btn btn-outline" onclick="logout()">Log Out</button></div></nav>
+  <div class="content">
+    <div class="result-page">
+      <div class="result-icon">✅</div>
+      <div class="result-title">Transaction Completed</div>
+      <div class="result-sub" id="confirm-msg">The action was completed successfully.</div>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button class="btn btn-gold" onclick="goHome()">Return to Home</button>
+        <button class="btn btn-outline" onclick="showPage('page-transactions')">New Transaction</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LOGOUT PAGE ==================== -->
+<div class="page" id="page-logout">
+  <div class="login-wrap">
+    <div class="login-box" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">👋</div>
+      <div class="login-title">Logged Out</div>
+      <div class="login-sub" style="margin-bottom:24px;">You have been signed out successfully</div>
+      <button class="btn btn-gold btn-full" onclick="showPage('page-login')">Back to Login</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js">
+</script>
+</body>
+</html>
